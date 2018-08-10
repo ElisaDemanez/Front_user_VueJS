@@ -1,5 +1,6 @@
 <template>
   <div class="hello">
+    {{lang}}
     <div id="map">
     </div>
   </div>
@@ -8,6 +9,7 @@
 <script>
 import MainService from "@/services/MainService";
 import "leaflet";
+import Vue from 'vue';
 
 const L = window.L;
 export default {
@@ -15,29 +17,39 @@ export default {
   data() {
     return {
       map: [],
-      points: null
+      points: null,
+      lang : Vue.prototype.$lang.lang
     };
   },
+  created() {
+    console.log()
+  },
   mounted() {
+    //  create custom method form filter on object
+    Object.filter = (obj, predicate) =>
+      Object.keys(obj)
+        .filter(key => predicate(obj[key]))
+        .reduce((res, key) => ((res[key] = obj[key]), res), {});
+
     this.initMap();
     var self = this;
     this.getPoints().then(function() {
-      console.log("there", self.points);
       for (const key in self.points) {
-      if (self.points.hasOwnProperty(key)) {
-        const element = self.points[key];
-         L.marker([element.latitude,element.longitude]).addTo(self.map)
-      }
-    }
-    });
+        if (self.points.hasOwnProperty(key)) {
+          const element = self.points[key];
+          var marker = L.marker([element.latitude, element.longitude]);
+          marker.addTo(self.map);
     
-   
+    
+          marker.bindPopup("<b>" + self.filteredName(element) + "</b><br>" + self.filteredDescription(element) );
+        }
+      }
+    });
   },
   methods: {
     async getPoints() {
       const response = await MainService.fetchPoints();
       this.points = response.data;
-      console.log("here");
     },
 
     initMap() {
@@ -55,6 +67,27 @@ export default {
         }
       ).addTo(map);
       this.map = map;
+    },
+    filteredName(element) {
+      var filteredName = Object.filter(
+        element.name,
+        name => name.langCode == "fr"
+      );
+      // get the name of the 1st element or set empty name
+      return (filteredName = filteredName[Object.keys(filteredName)[0]]
+        ? filteredName[Object.keys(filteredName)[0]].name
+        : "");
+    }, 
+    filteredDescription(element) {
+
+         var filteredName = Object.filter(
+        element.description,
+        description => description.langCode == "fr"
+      );
+      // get the name of the 1st element or set empty name
+      return (filteredName = filteredName[Object.keys(filteredName)[0]]
+        ? filteredName[Object.keys(filteredName)[0]].description
+        : "");
     }
   }
 };
