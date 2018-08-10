@@ -6,7 +6,7 @@ export default() => {
     headers: {
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json',
-    // 'x-access-token': localStorage.token
+     'x-access-token': localStorage.token
   }
   })
 }

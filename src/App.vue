@@ -5,7 +5,7 @@
             <v-toolbar-title class="oswald font-weight-bold">Title</v-toolbar-title>
 
             <v-spacer></v-spacer>
-            <v-btn icon class="hidden-sm-and-up" :to="{name:'Map'}">
+            <v-btn icon class="hidden-sm-and-up" :to="{name:'MapPage'}">
                 <v-icon class="primary-color">place</v-icon>
             </v-btn>
 
@@ -14,7 +14,7 @@
 
             </v-btn>
 
-            <v-btn flat class="hidden-xs-only primary-color" :to="{name:'Map'}">
+            <v-btn flat class="hidden-xs-only primary-color" :to="{name:'MapPage'}">
                 <v-icon>place</v-icon>
                 Carte
             </v-btn>
