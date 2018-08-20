@@ -1,5 +1,7 @@
 <template>
   <div class="hello">
+    
+    <span style="display:none;">{{$root.lang}}</span>
     <div id="map">
     </div>
   </div>
@@ -16,7 +18,7 @@ export default {
   data() {
     return {
       map: [],
-      points: null,
+      points: null
     };
   },
   created() {},
