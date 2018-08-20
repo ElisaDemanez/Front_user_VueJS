@@ -1,6 +1,5 @@
 <template>
   <div class="hello">
-    {{$root.lang}}
     <div id="map">
     </div>
   </div>
@@ -18,7 +17,6 @@ export default {
     return {
       map: [],
       points: null,
-      lang: this.$root.lang
     };
   },
   created() {},

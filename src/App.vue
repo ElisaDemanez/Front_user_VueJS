@@ -23,8 +23,7 @@
                 <v-icon>info</v-icon>
                 Informations
             </v-btn>
-            <!-- v-model="Vue.prototype.$lang.lang" -->
-            <select name="yoyo" id="" v-model="selected" >
+            <select name="yoyo" id="" v-model="$root.lang" >
                 <option v-for="item in items" :key="item">{{item}}</option>
             </select>
 
@@ -41,19 +40,11 @@ export default {
   name: "App",
   data: () => ({
     items: ["fr", "en", "nl"],
-    selected: "fr"
   }),
   created() {
-    console.log(Vue.prototype.$lang.lang);
-    Vue.prototype.$lang.lang = "parata";
-    console.log("created",Vue.prototype.$lang.lang);
-  },
+   },
   watch: {
-    selected: function(oldValue, newValue) {
-
-      Vue.prototype.$lang.lang = newValue;
-      console.log("change", Vue.prototype.$lang)
-    }
+  
   }
 };
 </script>
