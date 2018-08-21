@@ -42,22 +42,31 @@ export default {
         }
       }
     });
+    console.log("monted");
+    console.log(this.map.getPanes()["markerPane"]);
   },
   updated() {
+    
+    var markerLayer = this.map.getPanes()["markerPane"];
+    while (markerLayer.firstChild) {
+      markerLayer.removeChild(markerLayer.firstChild);
+    }
     //when lang change
     var self = this;
     self.map.closePopup();
     //  create custom method for filter on object, used in methods filteredXXX
-
     for (const key in self.points) {
       if (self.points.hasOwnProperty(key)) {
         const element = self.points[key];
-        var marker = L.marker([element.latitude, element.longitude]);
-        marker.addTo(self.map);
+        if (element.type == "parent") {
+          var marker = L.marker([element.latitude, element.longitude]);
+          marker.addTo(self.map);
 
-        self.bindPopup(marker, self);
+          self.bindPopup(marker, element);
+        }
       }
     }
+    console.log(this.map.getPanes()["markerPane"]);
   },
   methods: {
     async getPoints() {
@@ -102,6 +111,7 @@ export default {
         : "");
     },
     bindPopup(marker, element) {
+      console.log("bindpopo", element);
       marker.bindPopup(
         "<b>" +
           this.filteredName(element) +
