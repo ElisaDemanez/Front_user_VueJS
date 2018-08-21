@@ -1,6 +1,6 @@
 <template>
   <div class="hello">
-    
+    <v-btn color='pink darken-4' class='white--text oswald-title' > <v-icon color='white'>search</v-icon> Voir plus</v-btn>
     <span style="display:none;">{{$root.lang}}</span>
     <div id="map">
     </div>
@@ -21,34 +21,30 @@ export default {
       points: null
     };
   },
-  created() {},
   mounted() {
     //  create custom method for filter on object
+    var self = this;
     Object.filter = (obj, predicate) =>
       Object.keys(obj)
         .filter(key => predicate(obj[key]))
         .reduce((res, key) => ((res[key] = obj[key]), res), {});
 
     this.initMap();
-    var self = this;
     this.getPoints().then(function() {
       for (const key in self.points) {
         if (self.points.hasOwnProperty(key)) {
           const element = self.points[key];
-          var marker = L.marker([element.latitude, element.longitude]);
-          marker.addTo(self.map);
-
-          marker.bindPopup(
-            "<b>" +
-              self.filteredName(element) +
-              "</b><br>" +
-              self.filteredDescription(element)
-          );
+          if (element.type == "parent") {
+            var marker = L.marker([element.latitude, element.longitude]);
+            marker.addTo(self.map);
+            self.bindPopup(marker, element);
+          }
         }
       }
     });
   },
   updated() {
+    //when lang change
     var self = this;
     self.map.closePopup();
     //  create custom method for filter on object, used in methods filteredXXX
@@ -59,12 +55,7 @@ export default {
         var marker = L.marker([element.latitude, element.longitude]);
         marker.addTo(self.map);
 
-        marker.bindPopup(
-          "<b>" +
-            self.filteredName(element) +
-            "</b><br>" +
-            self.filteredDescription(element)
-        );
+        self.bindPopup(marker, self);
       }
     }
   },
@@ -109,6 +100,15 @@ export default {
       return (filteredName = filteredName[Object.keys(filteredName)[0]]
         ? filteredName[Object.keys(filteredName)[0]].description
         : "");
+    },
+    bindPopup(marker, element) {
+      marker.bindPopup(
+        "<b>" +
+          this.filteredName(element) +
+          "</b><br>" +
+          this.filteredDescription(element) +
+          "  <br> <button type='button' class='white--text oswald-title v-btn pink darken-4'><div class='v-btn__content'><i aria-hidden='true' class='v-icon white--text material-icons'>search</i> Voir plus</div></button>"
+      );
     }
   }
 };
