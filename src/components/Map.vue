@@ -31,42 +31,12 @@ export default {
 
     this.initMap();
     this.getPoints().then(function() {
-      for (const key in self.points) {
-        if (self.points.hasOwnProperty(key)) {
-          const element = self.points[key];
-          if (element.type == "parent") {
-            var marker = L.marker([element.latitude, element.longitude]);
-            marker.addTo(self.map);
-            self.bindPopup(marker, element);
-          }
-        }
-      }
+      self.displayParentMarkers();
     });
-    console.log("monted");
-    console.log(this.map.getPanes()["markerPane"]);
   },
   updated() {
-    
-    var markerLayer = this.map.getPanes()["markerPane"];
-    while (markerLayer.firstChild) {
-      markerLayer.removeChild(markerLayer.firstChild);
-    }
-    //when lang change
-    var self = this;
-    self.map.closePopup();
-    //  create custom method for filter on object, used in methods filteredXXX
-    for (const key in self.points) {
-      if (self.points.hasOwnProperty(key)) {
-        const element = self.points[key];
-        if (element.type == "parent") {
-          var marker = L.marker([element.latitude, element.longitude]);
-          marker.addTo(self.map);
-
-          self.bindPopup(marker, element);
-        }
-      }
-    }
-    console.log(this.map.getPanes()["markerPane"]);
+    this.resetMarkers();
+    this.displayParentMarkers();
   },
   methods: {
     async getPoints() {
@@ -110,15 +80,74 @@ export default {
         ? filteredName[Object.keys(filteredName)[0]].description
         : "");
     },
-    bindPopup(marker, element) {
-      console.log("bindpopo", element);
-      marker.bindPopup(
-        "<b>" +
-          this.filteredName(element) +
-          "</b><br>" +
-          this.filteredDescription(element) +
-          "  <br> <button type='button' class='white--text oswald-title v-btn pink darken-4'><div class='v-btn__content'><i aria-hidden='true' class='v-icon white--text material-icons'>search</i> Voir plus</div></button>"
-      );
+    displayParentMarkers() {
+      var self = this;
+      for (const key in self.points) {
+        if (self.points.hasOwnProperty(key)) {
+          const element = self.points[key];
+          console.log(JSON.parse(JSON.stringify(element)), key);
+          if (element.type == "parent") {
+            var marker = L.marker([element.latitude, element.longitude]);
+            marker.addTo(self.map);
+
+            marker.bindPopup(
+              "<b>" +
+                this.filteredName(element) +
+                "</b><br>" +
+                this.filteredDescription(element) +
+                "  <br> <button type='button' class='white--text oswald-title v-btn pink darken-4 display-children ' data-key='" +
+                key +
+                "'><div class='v-btn__content'><i aria-hidden='true' class='v-icon white--text material-icons'>search</i> Voir plus</div></button>"
+            );
+            marker.addEventListener("click", function(yey) {
+              var classname = document.getElementsByClassName(
+                "display-children"
+              );
+              var button = classname[classname.length - 1];
+
+              button.addEventListener("click", function(yo) {
+                var targetID = yo.target.dataset.key;
+                console.log(targetID);
+                var childrenToDisplay = self.points[targetID].children;
+                if (childrenToDisplay.length > 0) {
+                  self.displayChildrenMarkers(childrenToDisplay);
+                }
+              });
+            });
+          }
+        }
+      }
+    },
+    displayChildrenMarkers(children) {
+      var self = this;
+      this.resetMarkers();
+      var markerArray = [];
+      for (const key in children) {
+        if (children.hasOwnProperty(key)) {
+          const element = children[key];
+          console.log(JSON.parse(JSON.stringify(element)), key);
+          var marker = L.marker([element.latitude, element.longitude]);
+          marker.addTo(self.map);
+
+          marker.bindPopup(
+            "<b>" +
+              self.filteredName(element) +
+              "</b><br>" +
+              self.filteredDescription(element)
+          );
+          markerArray.push(marker);
+        }
+      }
+      var bounds = new L.featureGroup(markerArray);
+      console.log(markerArray, bounds.getBounds());
+      self.map.fitBounds(bounds.getBounds());
+    },
+    resetMarkers() {
+      var markerLayer = this.map.getPanes()["markerPane"];
+      while (markerLayer.firstChild) {
+        markerLayer.removeChild(markerLayer.firstChild);
+      }
+      this.map.closePopup();
     }
   }
 };
