@@ -1,7 +1,6 @@
 <template>
   <div class="hello">
-    <v-btn color='pink darken-4' class='white--text oswald-title' > <v-icon color='white'>search</v-icon> Voir plus</v-btn>
-    <span style="display:none;">{{$root.lang}}</span>
+      <span style="display:none;">{{$root.lang}}</span>
     <div id="map">
     </div>
   </div>
@@ -18,7 +17,8 @@ export default {
   data() {
     return {
       map: [],
-      points: null
+      points: null,
+      detailMode: null
     };
   },
   mounted() {
@@ -30,6 +30,7 @@ export default {
         .reduce((res, key) => ((res[key] = obj[key]), res), {});
 
     this.initMap();
+    this.map.createPane("offices");
     this.getPoints().then(function() {
       self.displayParentMarkers();
     });
@@ -45,13 +46,15 @@ export default {
     },
 
     initMap() {
+      var self = this;
       const map = L.map("map").setView([44.4986865, 1.1861205], 14);
       L.tileLayer(
         "https://{s}.tiles.mapbox.com/v4/{user}.{mapId}/{z}/{x}/{y}.png?access_token={token}",
         {
           attribution:
             'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-          maxZoom: 18,
+          maxZoom: 17,
+          minZoom: 12,
           mapId: "i81oam9h",
           user: "skycatch-dev",
           token:
@@ -59,33 +62,21 @@ export default {
         }
       ).addTo(map);
       this.map = map;
+      this.map.on("moveend", function(e) {
+        if (map.getZoom() <= 14 && self.detailMode) {
+          self.resetMarkers();
+          self.displayParentMarkers();
+        }
+      });
     },
-    filteredName(element) {
-      var filteredName = Object.filter(
-        element.name,
-        name => name.langCode == this.$root.lang
-      );
-      // get the name of the 1st element or set empty name
-      return (filteredName = filteredName[Object.keys(filteredName)[0]]
-        ? filteredName[Object.keys(filteredName)[0]].name
-        : "");
-    },
-    filteredDescription(element) {
-      var filteredName = Object.filter(
-        element.description,
-        description => description.langCode == this.$root.lang
-      );
-      // get the name of the 1st element or set empty name
-      return (filteredName = filteredName[Object.keys(filteredName)[0]]
-        ? filteredName[Object.keys(filteredName)[0]].description
-        : "");
-    },
+
     displayParentMarkers() {
       var self = this;
+      var markerArray = [];
+
       for (const key in self.points) {
         if (self.points.hasOwnProperty(key)) {
           const element = self.points[key];
-          console.log(JSON.parse(JSON.stringify(element)), key);
           if (element.type == "parent") {
             var marker = L.marker([element.latitude, element.longitude]);
             marker.addTo(self.map);
@@ -99,15 +90,17 @@ export default {
                 key +
                 "'><div class='v-btn__content'><i aria-hidden='true' class='v-icon white--text material-icons'>search</i> Voir plus</div></button>"
             );
-            marker.addEventListener("click", function(yey) {
+            markerArray.push(marker);
+
+            marker.addEventListener("click", function() {
               var classname = document.getElementsByClassName(
                 "display-children"
               );
               var button = classname[classname.length - 1];
 
-              button.addEventListener("click", function(yo) {
-                var targetID = yo.target.dataset.key;
-                console.log(targetID);
+              button.addEventListener("click", function(e) {
+                var targetID = e.target.dataset.key;
+
                 var childrenToDisplay = self.points[targetID].children;
                 if (childrenToDisplay.length > 0) {
                   self.displayChildrenMarkers(childrenToDisplay);
@@ -117,15 +110,19 @@ export default {
           }
         }
       }
+      // zoom on points
+      var bounds = new L.featureGroup(markerArray);
+      self.map.fitBounds(bounds.getBounds());
     },
     displayChildrenMarkers(children) {
-      var self = this;
       this.resetMarkers();
+      this.detailMode = true;
+      var self = this;
       var markerArray = [];
       for (const key in children) {
         if (children.hasOwnProperty(key)) {
           const element = children[key];
-          console.log(JSON.parse(JSON.stringify(element)), key);
+
           var marker = L.marker([element.latitude, element.longitude]);
           marker.addTo(self.map);
 
@@ -138,8 +135,8 @@ export default {
           markerArray.push(marker);
         }
       }
+      // zoom on points
       var bounds = new L.featureGroup(markerArray);
-      console.log(markerArray, bounds.getBounds());
       self.map.fitBounds(bounds.getBounds());
     },
     resetMarkers() {
@@ -147,7 +144,30 @@ export default {
       while (markerLayer.firstChild) {
         markerLayer.removeChild(markerLayer.firstChild);
       }
+      var shadowLayer = this.map.getPanes()["shadowPane"];
+      while (shadowLayer.firstChild) {
+        shadowLayer.removeChild(shadowLayer.firstChild);
+      }
       this.map.closePopup();
+    },
+    filteredName(element) {
+      var filteredName = Object.filter(
+        element.name,
+        name => name.langCode == this.$root.lang
+      );
+      // get the name of the 1st element or set empty name
+      return (filteredName = filteredName[Object.keys(filteredName)[0]]
+        ? filteredName[Object.keys(filteredName)[0]].name
+        : "");
+    },
+    filteredDescription(element) {
+      var filteredDesc = Object.filter(
+        element.description,
+        description => description.langCode == this.$root.lang
+      );
+      return (filteredDesc = filteredDesc[Object.keys(filteredDesc)[0]]
+        ? filteredDesc[Object.keys(filteredDesc)[0]].description
+        : "");
     }
   }
 };

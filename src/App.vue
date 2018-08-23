@@ -14,7 +14,7 @@
 
             </v-btn>
 
-            <v-btn flat class="hidden-xs-only primary-color" :to="{name:'MapPage'}">
+            <v-btn flat class="hidden-xs-only primary-color"  :to="{name:'MapPage'}">
                 <v-icon>place</v-icon>
                 {{map[$root.lang]}}
             </v-btn>
@@ -40,7 +40,7 @@ export default {
   name: "App",
   data: () => ({
     items: ["fr", "en", "nl"],
-    title: { fr: "titre", nl: "nltitle", en: "title" },
+    title: { fr: "Titre", nl: "Nltitle", en: "Title" },
     map: { fr: "carte", nl: "nlmap", en: "map" },
     informations: {
       fr: "informations",
@@ -62,5 +62,11 @@ export default {
 }
 .primary-color {
   color: #5e1b2d !important;
+}
+.oswald-title {
+font-family: "Oswald", Arial, sans-serif !important;
+font-weight: bold !important;
+text-transform: none !important;
+letter-spacing: 1px!important;
 }
 </style>
