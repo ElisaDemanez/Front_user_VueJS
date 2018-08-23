@@ -18,7 +18,8 @@ export default {
     return {
       map: [],
       points: null,
-      detailMode: null
+      detailMode: null,
+      officesMarkers: []
     };
   },
   mounted() {
@@ -30,14 +31,35 @@ export default {
         .reduce((res, key) => ((res[key] = obj[key]), res), {});
 
     this.initMap();
-    this.map.createPane("offices");
+
     this.getPoints().then(function() {
       self.displayParentMarkers();
+
+      // sort office points
+      for (const key in self.points) {
+        if (self.points.hasOwnProperty(key)) {
+          const element = self.points[key];
+          if (element.type == "office") {
+            var marker = L.marker([element.latitude, element.longitude]);
+            marker.addTo(self.map);
+
+            marker.bindPopup(
+              "<b>" +
+                self.filteredName(element) +
+                "</b><br>" +
+                self.filteredDescription(element)
+            );
+            self.officesMarkers.push(marker);
+          }
+        }
+      }
     });
   },
   updated() {
+    var self = this;
     this.resetMarkers();
     this.displayParentMarkers();
+    // this.displayOfficesMarkers();
   },
   methods: {
     async getPoints() {
@@ -47,6 +69,7 @@ export default {
 
     initMap() {
       var self = this;
+
       const map = L.map("map").setView([44.4986865, 1.1861205], 14);
       L.tileLayer(
         "https://{s}.tiles.mapbox.com/v4/{user}.{mapId}/{z}/{x}/{y}.png?access_token={token}",
@@ -64,8 +87,11 @@ export default {
       this.map = map;
       this.map.on("moveend", function(e) {
         if (map.getZoom() <= 14 && self.detailMode) {
+          console.log("passe dedans", self.detailMode);
+
           self.resetMarkers();
           self.displayParentMarkers();
+          self.detailMode = false;
         }
       });
     },
@@ -138,6 +164,13 @@ export default {
       // zoom on points
       var bounds = new L.featureGroup(markerArray);
       self.map.fitBounds(bounds.getBounds());
+      // this.displayOfficesMarkers();
+    },
+    displayOfficesMarkers() {
+      this.officesMarkers.forEach(element => {
+        console.log("el", element);
+        element.addTo(self.map);
+      });
     },
     resetMarkers() {
       var markerLayer = this.map.getPanes()["markerPane"];
