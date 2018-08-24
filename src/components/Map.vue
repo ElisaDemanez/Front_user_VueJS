@@ -8,8 +8,8 @@
 
 <script>
 import MainService from "@/services/MainService";
+import officeIcn from "@/assets/office-de-tourisme.png";
 import "leaflet";
-import Vue from "vue";
 
 const L = window.L;
 export default {
@@ -19,47 +19,35 @@ export default {
       map: [],
       points: null,
       detailMode: null,
-      officesMarkers: []
+      officesMarkers: [],
+      officeIcon: null
     };
   },
   mounted() {
-    //  create custom method for filter on object
     var self = this;
+    //  create custom method for filter on object
     Object.filter = (obj, predicate) =>
       Object.keys(obj)
         .filter(key => predicate(obj[key]))
         .reduce((res, key) => ((res[key] = obj[key]), res), {});
 
     this.initMap();
-
+    this.initIcon();
     this.getPoints().then(function() {
       self.displayParentMarkers();
 
-      // sort office points
-      for (const key in self.points) {
-        if (self.points.hasOwnProperty(key)) {
-          const element = self.points[key];
-          if (element.type == "office") {
-            var marker = L.marker([element.latitude, element.longitude]);
-            marker.addTo(self.map);
-
-            marker.bindPopup(
-              "<b>" +
-                self.filteredName(element) +
-                "</b><br>" +
-                self.filteredDescription(element)
-            );
-            self.officesMarkers.push(marker);
-          }
-        }
-      }
+      self.officesMarkers = Object.filter(
+        self.points,
+        element => element.type == "office"
+      );
+      self.displayOfficesMarkers();
     });
   },
   updated() {
     var self = this;
     this.resetMarkers();
     this.displayParentMarkers();
-    // this.displayOfficesMarkers();
+    this.displayOfficesMarkers();
   },
   methods: {
     async getPoints() {
@@ -87,8 +75,6 @@ export default {
       this.map = map;
       this.map.on("moveend", function(e) {
         if (map.getZoom() <= 14 && self.detailMode) {
-          console.log("passe dedans", self.detailMode);
-
           self.resetMarkers();
           self.displayParentMarkers();
           self.detailMode = false;
@@ -164,13 +150,29 @@ export default {
       // zoom on points
       var bounds = new L.featureGroup(markerArray);
       self.map.fitBounds(bounds.getBounds());
-      // this.displayOfficesMarkers();
+      this.displayOfficesMarkers();
     },
     displayOfficesMarkers() {
-      this.officesMarkers.forEach(element => {
-        console.log("el", element);
-        element.addTo(self.map);
-      });
+      var self = this;
+      console.log("displauofficemarkje", self.officesMarkers);
+
+      for (const key in self.officesMarkers) {
+        if (self.officesMarkers.hasOwnProperty(key)) {
+          const element = self.officesMarkers[key];
+          console.log("elementhere");
+          var marker = L.marker([element.latitude, element.longitude], {
+            icon: self.officeIcon
+          });
+          marker.addTo(self.map);
+
+          marker.bindPopup(
+            "<b>" +
+              self.filteredName(element) +
+              "</b><br>" +
+              self.filteredDescription(element)
+          );
+        }
+      }
     },
     resetMarkers() {
       var markerLayer = this.map.getPanes()["markerPane"];
@@ -201,6 +203,15 @@ export default {
       return (filteredDesc = filteredDesc[Object.keys(filteredDesc)[0]]
         ? filteredDesc[Object.keys(filteredDesc)[0]].description
         : "");
+    },
+    initIcon() {
+      this.officeIcon = L.icon({
+        iconUrl: officeIcn,
+
+        iconSize: [45, 45],
+        iconAnchor: [22, 94],
+        popupAnchor: [0, -80]
+      });
     }
   }
 };
