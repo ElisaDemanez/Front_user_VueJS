@@ -22,7 +22,14 @@ export default {
       points: null,
       detailMode: null,
       officesMarkers: [],
-      officeIcon: null
+      officeIcon: L.icon({
+        iconUrl: officeIcn,
+
+        iconSize: [45, 45],
+        iconAnchor: [22, 94],
+        popupAnchor: [0, -80]
+      }),
+      violetIcon: null
     };
   },
   mounted() {
@@ -34,10 +41,10 @@ export default {
         .reduce((res, key) => ((res[key] = obj[key]), res), {});
 
     this.initMap();
-    this.initIcon();
     this.getPoints().then(function() {
       self.displayParentMarkers();
 
+      // filter offices markers
       self.officesMarkers = Object.filter(
         self.points,
         element => element.type == "office"
@@ -59,12 +66,8 @@ export default {
 
     initMap() {
       var self = this;
-      var southWest = L.latLng(44.450334, 1.033596),
-        northEast = L.latLng(44.578653, 1.325752),
-        bounds = L.latLngBounds(southWest, northEast);
 
-      const map = L.map("map").setView([44.4986865, 1.1861205], 14);
-      L.tileLayer(
+      var sateliteLayer = L.tileLayer(
         "https://{s}.tiles.mapbox.com/v4/{user}.{mapId}/{z}/{x}/{y}.png?access_token={token}",
         {
           attribution:
@@ -76,10 +79,35 @@ export default {
           token:
             "pk.eyJ1Ijoic2t5Y2F0Y2gtZGV2IiwiYSI6Ik1PVjVYNEkifQ.j2X9OOZDz7ABqUvHk4kesw"
         }
-      ).addTo(map);
+      );
 
+      var vectorLayer = L.tileLayer(
+        "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          attribution:
+            'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+          maxZoom: 17,
+          minZoom: 12
+        }
+      );
+      const map = L.map("map", {
+        center: [44.4986865, 1.1861205],
+        zoom: 14,
+        layers: [vectorLayer, sateliteLayer]
+      });
+
+      var baseMaps = {
+        Satellite: vectorLayer,
+        Plan: sateliteLayer
+      };
+      L.control.layers(baseMaps).addTo(map);
+
+      var southWest = L.latLng(44.450334, 1.033596),
+        northEast = L.latLng(44.578653, 1.325752),
+        bounds = L.latLngBounds(southWest, northEast);
       map.setMaxBounds(bounds);
 
+      // geolocation
       L.easyButton(
         "<span style='font-size: 30px;line-height: 33px;'>&curren;</span>",
         function(btn, map) {
@@ -87,14 +115,15 @@ export default {
         }
       ).addTo(map);
 
-      this.map = map;
-      this.map.on("moveend", function(e) {
+      // if in detail mode and dezoom
+      map.on("moveend", function(e) {
         if (map.getZoom() <= 14 && self.detailMode) {
           self.resetMarkers();
           self.displayParentMarkers();
           self.detailMode = false;
         }
       });
+      this.map = map;
     },
 
     displayParentMarkers() {
@@ -218,15 +247,6 @@ export default {
       return (filteredDesc = filteredDesc[Object.keys(filteredDesc)[0]]
         ? filteredDesc[Object.keys(filteredDesc)[0]].description
         : "");
-    },
-    initIcon() {
-      this.officeIcon = L.icon({
-        iconUrl: officeIcn,
-
-        iconSize: [45, 45],
-        iconAnchor: [22, 94],
-        popupAnchor: [0, -80]
-      });
     }
   }
 };
