@@ -86,6 +86,17 @@ export default {
   background: white;
   width: 30px;
   height: 30px;
-  border-radius: 5px;
+  border-radius: 2px;
+}
+
+.easy-button-button:hover {
+  background: #f4f4f4;
+}
+
+.leaflet-popup-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 </style>
