@@ -3,6 +3,7 @@
       <span style="display:none;">{{$root.lang}}</span>
     <div id="map">
     </div>
+       
   </div>
 </template>
 
@@ -10,6 +11,7 @@
 import MainService from "@/services/MainService";
 import officeIcn from "@/assets/office-de-tourisme.png";
 import "leaflet";
+import "leaflet-easybutton";
 
 const L = window.L;
 export default {
@@ -57,6 +59,9 @@ export default {
 
     initMap() {
       var self = this;
+      var southWest = L.latLng(44.450334, 1.033596),
+        northEast = L.latLng(44.578653, 1.325752),
+        bounds = L.latLngBounds(southWest, northEast);
 
       const map = L.map("map").setView([44.4986865, 1.1861205], 14);
       L.tileLayer(
@@ -72,6 +77,16 @@ export default {
             "pk.eyJ1Ijoic2t5Y2F0Y2gtZGV2IiwiYSI6Ik1PVjVYNEkifQ.j2X9OOZDz7ABqUvHk4kesw"
         }
       ).addTo(map);
+
+      map.setMaxBounds(bounds);
+
+      L.easyButton(
+        "<span style='font-size: 30px;line-height: 33px;'>&curren;</span>",
+        function(btn, map) {
+          map.locate({ setView: true });
+        }
+      ).addTo(map);
+
       this.map = map;
       this.map.on("moveend", function(e) {
         if (map.getZoom() <= 14 && self.detailMode) {

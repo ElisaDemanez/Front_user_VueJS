@@ -1,35 +1,39 @@
 <template>
     <div id="app">
+        <v-app>
 
-        <v-toolbar dense>
-            <v-toolbar-title class="oswald font-weight-bold">{{title[$root.lang]}}</v-toolbar-title>
+            <v-toolbar dense>
+                <v-toolbar-title class="oswald font-weight-bold">{{title[$root.lang]}}</v-toolbar-title>
 
-            <v-spacer></v-spacer>
-            <v-btn icon class="hidden-sm-and-up" :to="{name:'MapPage'}">
-                <v-icon class="primary-color">place</v-icon>
-            </v-btn>
+                <v-spacer></v-spacer>
+                <v-btn icon class="hidden-sm-and-up" :to="{name:'MapPage'}">
+                    <v-icon class="primary-color">place</v-icon>
+                </v-btn>
 
-            <v-btn icon class="hidden-sm-and-up" :to="{name:'Informations'}">
-                <v-icon class="primary-color">info</v-icon>
+                <v-btn icon class="hidden-sm-and-up" :to="{name:'Informations'}">
+                    <v-icon class="primary-color">info</v-icon>
 
-            </v-btn>
+                </v-btn>
 
-            <v-btn flat class="hidden-xs-only primary-color"  :to="{name:'MapPage'}">
-                <v-icon>place</v-icon>
-                {{map[$root.lang]}}
-            </v-btn>
+                <v-btn flat class="hidden-xs-only primary-color" :to="{name:'MapPage'}">
+                    <v-icon>place</v-icon>
+                    {{map[$root.lang]}}
+                </v-btn>
 
-            <v-btn flat class="hidden-xs-only primary-color" :to="{name:'Informations'}">
-                <v-icon>info</v-icon>
-             {{informations[$root.lang]}}
-            </v-btn>
-            <select name="yoyo" id="" v-model="$root.lang" >
-                <option v-for="item in items" :key="item">{{item}}</option>
-            </select>
+                <v-btn flat class="hidden-xs-only primary-color" :to="{name:'Informations'}">
+                    <v-icon>info</v-icon>
+                    {{informations[$root.lang]}}
+                </v-btn>
+                <select name="yoyo" id="" v-model="$root.lang">
+                    <option v-for="item in items" :key="item">{{item}}</option>
+                </select>
 
-        </v-toolbar>
+            </v-toolbar>
+            <v-content>
+                    <router-view></router-view>
 
-        <router-view/>
+            </v-content>
+        </v-app>
     </div>
 </template>
 
@@ -64,9 +68,24 @@ export default {
   color: #5e1b2d !important;
 }
 .oswald-title {
-font-family: "Oswald", Arial, sans-serif !important;
-font-weight: bold !important;
-text-transform: none !important;
-letter-spacing: 1px!important;
+  font-family: "Oswald", Arial, sans-serif !important;
+  font-weight: bold !important;
+  text-transform: none !important;
+  letter-spacing: 1px !important;
+}
+
+.custom-icon {
+  background-color: white;
+  border-radius: 2px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+}
+
+.easy-button-button {
+  background: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
 }
 </style>
