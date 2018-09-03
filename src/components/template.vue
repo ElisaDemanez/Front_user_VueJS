@@ -14,7 +14,7 @@ export default {
   mounted() {
   },
   methods: {
-     getLambs() {
+     getL() {
   
     }
   }

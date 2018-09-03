@@ -10,6 +10,7 @@
 <script>
 import MainService from "@/services/MainService";
 import officeIcn from "@/assets/office-de-tourisme.png";
+import baseIcn from "@/assets/base-icon.png";
 import "leaflet";
 import "leaflet-easybutton";
 
@@ -29,7 +30,13 @@ export default {
         iconAnchor: [22, 94],
         popupAnchor: [0, -80]
       }),
-      violetIcon: null
+      baseIcon: L.icon({
+        iconUrl: baseIcn,
+
+        iconSize: [45, 45],
+        iconAnchor: [22, 94],
+        popupAnchor: [0, -80]
+      })
     };
   },
   mounted() {
@@ -134,7 +141,9 @@ export default {
         if (self.points.hasOwnProperty(key)) {
           const element = self.points[key];
           if (element.type == "parent") {
-            var marker = L.marker([element.latitude, element.longitude]);
+            var marker = L.marker([element.latitude, element.longitude], {
+              icon: self.baseIcon
+            });
             marker.addTo(self.map);
 
             marker.bindPopup(
@@ -167,8 +176,11 @@ export default {
         }
       }
       // zoom on points
-      var bounds = new L.featureGroup(markerArray);
-      self.map.fitBounds(bounds.getBounds());
+    
+      if (markerArray.length) {
+        var bounds = new L.featureGroup(markerArray);
+        self.map.fitBounds(bounds.getBounds());
+      }
     },
     displayChildrenMarkers(children) {
       this.resetMarkers();
@@ -198,12 +210,10 @@ export default {
     },
     displayOfficesMarkers() {
       var self = this;
-      console.log("displauofficemarkje", self.officesMarkers);
 
       for (const key in self.officesMarkers) {
         if (self.officesMarkers.hasOwnProperty(key)) {
           const element = self.officesMarkers[key];
-          console.log("elementhere");
           var marker = L.marker([element.latitude, element.longitude], {
             icon: self.officeIcon
           });
@@ -252,7 +262,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #map {
   width: 100vw;
