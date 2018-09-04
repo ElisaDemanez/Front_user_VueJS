@@ -4,6 +4,8 @@ import MapPage from '@/views/User/MapPage'
 import Informations from '@/views/User/Informations'
 import Admin from '@/views/Admin/Admin'
 import Points from '@/views/Admin/Points'
+import Point from '@/views/Admin/Point'
+
 
 
 
@@ -31,6 +33,17 @@ export default new Router({
       path: '/admin/points',
       name: 'AdminPoints',
       component: Points
+    },
+    {
+      path: '/admin/point/:id',
+      name: 'AdminPointUpdate',
+      component: Point
+    },
+    {
+      path: '/admin/point',
+      name: 'AdminPoint',
+      component: Point
     }
+    
   ]
 })
