@@ -19,23 +19,27 @@
                     <div id="map">
                     </div>
                     <v-layout row>
-                        <v-flex xs12 sm10 >
-                            <v-text-field v-model="point.latitude" label="Latitude"  :rules="rules.latitude"  required ></v-text-field>
+                        <v-flex xs12 sm10>
+                            <v-text-field v-model="point.latitude" label="Latitude" :rules="rules.latitude" required></v-text-field>
                         </v-flex>
                         <v-flex xs12 sm10 offset-sm2>
 
 
-                            <v-text-field v-model="point.longitude" label="Longitude"  :rules="rules.longitude"   required></v-text-field>
+                            <v-text-field v-model="point.longitude" label="Longitude" :rules="rules.longitude" required></v-text-field>
 
                         </v-flex>
 
                     </v-layout>
-                    <v-text-field v-model="point.name_en" :counter="50" label="Titre anglais" ></v-text-field>
+                    <v-text-field v-model="point.name_en" :counter="50" label="Titre anglais"></v-text-field>
                     <!-- :rules="titreRules" -->
-                    <v-text-field v-model="point.description_en" label="Description anglaise" ></v-text-field><v-text-field v-model="point.name_nl" :counter="50" label="Titre néerlandais" ></v-text-field>
+                    <v-text-field v-model="point.description_en" label="Description anglaise"></v-text-field>
+                    <v-text-field v-model="point.name_nl" :counter="50" label="Titre néerlandais"></v-text-field>
                     <!-- :rules="titreRules" -->
-                    <v-text-field v-model="point.description_nl" label="Description néerlandaise" ></v-text-field>
-
+                    <v-text-field v-model="point.description_nl" label="Description néerlandaise"></v-text-field>
+                    
+                    <v-btn color="pink darken-4" dark class=" font-weight-bold" :disabled="!valid" @click="submit">
+                        Valider
+                    </v-btn>
                 </v-form>
 
             </v-flex>
@@ -94,8 +98,7 @@ export default {
 
       L.tileLayer("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution:
-          'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-  
+          'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
       }).addTo(map);
       this.map = map;
     },
@@ -109,6 +112,61 @@ export default {
         self.point.latitude = self.marker["_latlng"].lat;
         self.point.longitude = self.marker["_latlng"].lng;
       });
+    },
+    submit() {
+      // const params = {
+      //   type: "string",
+      //   latitude: this.point.latitude,
+      //   longitude: this.point.longitude,
+      //   name: [
+      //     {
+      //       nametext: this.point.name_fr,
+      //       langCode: "fr"
+      //     }
+      //   ],
+      //   description: [
+      //     {
+      //       langCode: "fr",
+      //       descriptionText: this.point.description_fr
+      //     }
+      //   ]
+      // };
+      const params = {
+        type: "string",
+        latitude: this.point.latitude,
+        longitude: this.point.longitude,
+        name: [
+          {
+            nametext: this.point.name_fr,
+            langCode: "fr"
+          },
+          {
+            nametext: this.point.name_en,
+            langCode: "en"
+          },{
+            nametext: this.point.name_nl,
+            langCode: "nl"
+          }
+        ],
+        description: [
+          {
+            langCode: "fr",
+            descriptionText: this.point.description_fr
+          },
+          {
+            langCode: "en",
+            descriptionText: this.point.description_en
+          },{
+            langCode: "nl",
+            descriptionText: this.point.description_nl
+          }
+        ]
+      };
+      console.log(params);
+      if (this.$route.params.id) {
+        MainService.putPoint(this.point.id, params);
+      }
+      console.log("yo");
     }
   },
   watch: {
