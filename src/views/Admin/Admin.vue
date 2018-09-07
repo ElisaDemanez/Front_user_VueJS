@@ -1,7 +1,6 @@
 <template>
   <div class="hello">
     <Navbar/>
- <!-- <button @click="submit()">oyoy</button> -->
   </div>
 </template>
 
@@ -19,15 +18,7 @@ export default {
   },
   mounted() {},
   methods: {
-    submit() {
-      const params = {
-        langCode: "fr",
-        descriptionText: "yoyoyoy",
-        fkPoint: "/api/points/19"
-      };
-      MainService.postDescription(params);
-      console.log("yo");
-    }
+   
   }
 };
 </script>

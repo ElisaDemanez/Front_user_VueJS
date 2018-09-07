@@ -1,50 +1,50 @@
 <template>
-    <div id="bbonjour">
-        <Navbar />
-        <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
-                <h2 class="headline oswald font-weight-bold" v-if="point">
-                    Modification du point
-                </h2>
-                <h2 class="headline oswald font-weight-bold" v-else>
-                    Nouveau point
-                </h2>
+  <div id="bbonjour">
+    <Navbar />
+    <v-layout row>
+      <v-flex xs12 sm6 offset-sm3>
+        <h2 class="headline oswald font-weight-bold" v-if="point">
+          Modification du point
+        </h2>
+        <h2 class="headline oswald font-weight-bold" v-else>
+          Nouveau point
+        </h2>
 
+        <v-form v-model="valid">
+          <v-text-field v-model="point.name_fr" :counter="50" label="Titre" required></v-text-field>
+          <!-- :rules="titreRules" -->
+          <v-text-field v-model="point.description_fr" label="Description" required></v-text-field>
 
-                <v-form v-model="valid">
-                    <v-text-field v-model="point.name_fr" :counter="50" label="Titre" required></v-text-field>
-                    <!-- :rules="titreRules" -->
-                    <v-text-field v-model="point.description_fr" label="Description" required></v-text-field>
+          <div id="map">
+          </div>
+          <v-layout row>
+            <v-flex xs12 sm10>
+              <v-text-field v-model="point.latitude" label="Latitude" required></v-text-field>
+              <!-- :rules="rules.latitude" -->
+            </v-flex>
+            <v-flex xs12 sm10 offset-sm2>
 
-                    <div id="map">
-                    </div>
-                    <v-layout row>
-                        <v-flex xs12 sm10>
-                            <v-text-field v-model="point.latitude" label="Latitude" :rules="rules.latitude" required></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm10 offset-sm2>
-
-
-                            <v-text-field v-model="point.longitude" label="Longitude" :rules="rules.longitude" required></v-text-field>
-
-                        </v-flex>
-
-                    </v-layout>
-                    <v-text-field v-model="point.name_en" :counter="50" label="Titre anglais"></v-text-field>
-                    <!-- :rules="titreRules" -->
-                    <v-text-field v-model="point.description_en" label="Description anglaise"></v-text-field>
-                    <v-text-field v-model="point.name_nl" :counter="50" label="Titre néerlandais"></v-text-field>
-                    <!-- :rules="titreRules" -->
-                    <v-text-field v-model="point.description_nl" label="Description néerlandaise"></v-text-field>
-                    
-                    <v-btn color="pink darken-4" dark class=" font-weight-bold" :disabled="!valid" @click="submit">
-                        Valider
-                    </v-btn>
-                </v-form>
+              <v-text-field v-model="point.longitude" label="Longitude" required></v-text-field>
+              <!-- :rules="rules.longitude" -->
 
             </v-flex>
-        </v-layout>
-    </div>
+
+          </v-layout>
+          <v-text-field v-model="point.name_en" :counter="50" label="Titre anglais"></v-text-field>
+          <!-- :rules="titreRules" -->
+          <v-text-field v-model="point.description_en" label="Description anglaise"></v-text-field>
+          <v-text-field v-model="point.name_nl" :counter="50" label="Titre néerlandais"></v-text-field>
+          <!-- :rules="titreRules" -->
+          <v-text-field v-model="point.description_nl" label="Description néerlandaise"></v-text-field>
+
+          <v-btn color="pink darken-4" dark class=" font-weight-bold" :disabled="!valid" @click="submit">
+            Valider
+          </v-btn>
+        </v-form>
+
+      </v-flex>
+    </v-layout>
+  </div>
 </template>
 
 <script>
@@ -52,6 +52,16 @@ import Navbar from "@/components/Admin/Navbar";
 import MainService from "@/services/MainService";
 import "leaflet";
 const L = window.L;
+    // rules: {
+      //   latitude: value => {
+      //     const pattern = /^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/;
+      //     return pattern.test(value) || "Invalid latitude.";
+      //   },
+      //   longitude: value => {
+      //     const pattern = /^\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)/;
+      //     return pattern.test(value) || "Invalid longitude.";
+      //   }
+      // },
 
 export default {
   name: "Point",
@@ -73,16 +83,7 @@ export default {
         description_nl: null
       },
       valid: false,
-      rules: {
-        latitude: value => {
-          const pattern = /^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/;
-          return pattern.test(value) || "Invalid latitude.";
-        },
-        longitude: value => {
-          const pattern = /^\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)/;
-          return pattern.test(value) || "Invalid longitude.";
-        }
-      },
+  
       marker: null
     };
   },
@@ -114,23 +115,6 @@ export default {
       });
     },
     submit() {
-      // const params = {
-      //   type: "string",
-      //   latitude: this.point.latitude,
-      //   longitude: this.point.longitude,
-      //   name: [
-      //     {
-      //       nametext: this.point.name_fr,
-      //       langCode: "fr"
-      //     }
-      //   ],
-      //   description: [
-      //     {
-      //       langCode: "fr",
-      //       descriptionText: this.point.description_fr
-      //     }
-      //   ]
-      // };
       const params = {
         type: "string",
         latitude: this.point.latitude,
@@ -162,11 +146,12 @@ export default {
           }
         ]
       };
-      console.log(params);
       if (this.$route.params.id) {
         MainService.putPoint(this.point.id, params);
       }
-      console.log("yo");
+      else{
+           MainService.postPoint(params);
+      }
     }
   },
   watch: {
