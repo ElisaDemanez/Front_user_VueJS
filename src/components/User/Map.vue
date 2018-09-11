@@ -73,7 +73,7 @@ export default {
 
     initMap() {
       var self = this;
-
+      // layers
       var sateliteLayer = L.tileLayer(
         "https://{s}.tiles.mapbox.com/v4/{user}.{mapId}/{z}/{x}/{y}.png?access_token={token}",
         {
@@ -108,7 +108,7 @@ export default {
         Plan: sateliteLayer
       };
       L.control.layers(baseMaps).addTo(map);
-
+      // max bounds
       var southWest = L.latLng(44.450334, 1.033596),
         northEast = L.latLng(44.578653, 1.325752),
         bounds = L.latLngBounds(southWest, northEast);
@@ -176,7 +176,7 @@ export default {
         }
       }
       // zoom on points
-    
+
       if (markerArray.length) {
         var bounds = new L.featureGroup(markerArray);
         self.map.fitBounds(bounds.getBounds());
@@ -240,13 +240,14 @@ export default {
       this.map.closePopup();
     },
     filteredName(element) {
+      console.log(element.name,this.$root.lang )
       var filteredName = Object.filter(
         element.name,
         name => name.langCode == this.$root.lang
       );
       // get the name of the 1st element or set empty name
       return (filteredName = filteredName[Object.keys(filteredName)[0]]
-        ? filteredName[Object.keys(filteredName)[0]].name
+        ? filteredName[Object.keys(filteredName)[0]].nametext
         : "");
     },
     filteredDescription(element) {
@@ -255,7 +256,7 @@ export default {
         description => description.langCode == this.$root.lang
       );
       return (filteredDesc = filteredDesc[Object.keys(filteredDesc)[0]]
-        ? filteredDesc[Object.keys(filteredDesc)[0]].description
+        ? filteredDesc[Object.keys(filteredDesc)[0]].descriptionText
         : "");
     }
   }
