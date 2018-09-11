@@ -3,7 +3,7 @@
     <Navbar />
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
-        <v-layout row>
+        <v-layout row class="mt-5">
           <v-flex xs10>
             <h2 class="headline oswald font-weight-bold">
               Les Points
@@ -14,31 +14,36 @@
               <v-btn fab dark color="pink darken-4" slot="activator">
                 <v-icon dark>add</v-icon>
               </v-btn>
+
               <v-list>
                 <v-list-tile :to="{name:'AdminPoint', params:{type : 'parent'}}">
                   <v-list-tile-title> Village</v-list-tile-title>
                 </v-list-tile>
                 <v-list-tile :to="{name:'AdminPoint', params:{type : 'children'}}">
-                  <v-list-tile-title  > Détail</v-list-tile-title>
+                  <v-list-tile-title> Détail</v-list-tile-title>
                 </v-list-tile>
-                 <v-list-tile :to="{name:'AdminPoint', params:{type : 'office'}}">
-                  <v-list-tile-title  > Office</v-list-tile-title>
+                <v-list-tile :to="{name:'AdminPoint', params:{type : 'office'}}">
+                  <v-list-tile-title> Office</v-list-tile-title>
                 </v-list-tile>
               </v-list>
             </v-menu>
           </v-flex>
         </v-layout>
-
+        <v-tabs fixed-tabs v-if="!loading" v-model="active">
+          <v-tab v-for="n in categories" :key="n.name" @click="refreshFilter(n.category)">
+            {{ n.name }}
+          </v-tab>
+        </v-tabs>
         <v-card>
           <v-list two-line>
-              <v-progress-circular v-if="loading" indeterminate>
-              </v-progress-circular>
-            <template v-else v-for="(item, index) in points">
+            <v-progress-circular v-if="loading" indeterminate>
+            </v-progress-circular>
+            <template v-else v-for="(item, index) in filteredPoints">
               <!-- {{item}} -->
               <v-list-tile :key="index" avatar>
                 <!-- <v-list-tile-avatar>
-                                  <img :src="item.avatar">
-                              </v-list-tile-avatar> -->
+                                    <img :src="item.avatar">
+                                </v-list-tile-avatar> -->
 
                 <v-list-tile-content :key="item.id">
                   <v-list-tile-title v-for="name in item.name" v-if="name.langCode=='fr'" :key="name.nametext">
@@ -74,13 +79,43 @@ export default {
   data() {
     return {
       points: null,
-      loading: true
+      filteredPoints: null,
+      loading: true,
+      categories: [
+        { name: "Tous", category: "all" },
+        { name: "Villages", category: "children" },
+        { name: "Parents", category: "parent" },
+        { name: "Offices", category: "office" }
+      ],
+      active: null
     };
   },
   methods: {
     async getPoints() {
       const response = await MainService.fetchPoints();
       this.points = response.data;
+      this.filteredPoints = response.data;
+    },
+    refreshFilter(category) {
+      let self = this;
+
+      //  you cant use computed stuff when depending on async stuff
+      if (category == "all") this.filteredPoints = this.points;
+      else {
+        self.filteredPoints = [];
+        let filteredIndexes = Object.keys(this.points).filter(function(index) {
+          var type = self.points[index].type;
+          return type == category;
+        });
+        for (const key in self.points) {
+          if (self.points.hasOwnProperty(key)) {
+            const element = self.points[key];
+            if (filteredIndexes.includes(key)) {
+              self.filteredPoints.push(element);
+            }
+          }
+        }
+      }
     }
   },
   created: function() {
