@@ -35,12 +35,12 @@ export default new Router({
       component: Points
     },
     {
-      path: '/admin/point/:id',
+      path: '/admin/point/:type/:id',
       name: 'AdminPointUpdate',
       component: Point
     },
     {
-      path: '/admin/point',
+      path: '/admin/point/:type',
       name: 'AdminPoint',
       component: Point
     }

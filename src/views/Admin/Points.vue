@@ -15,11 +15,14 @@
                 <v-icon dark>add</v-icon>
               </v-btn>
               <v-list>
-                <v-list-tile :to="{name:'Informations'}" >
+                <v-list-tile :to="{name:'AdminPoint', params:{type : 'parent'}}">
                   <v-list-tile-title> Village</v-list-tile-title>
                 </v-list-tile>
-                <v-list-tile>
-                  <v-list-tile-title :to="{name:'Informations'}" > Détail</v-list-tile-title>
+                <v-list-tile :to="{name:'AdminPoint', params:{type : 'children'}}">
+                  <v-list-tile-title  > Détail</v-list-tile-title>
+                </v-list-tile>
+                 <v-list-tile :to="{name:'AdminPoint', params:{type : 'office'}}">
+                  <v-list-tile-title  > Office</v-list-tile-title>
                 </v-list-tile>
               </v-list>
             </v-menu>
@@ -44,7 +47,7 @@
                     {{description.descriptionText }}</v-list-tile-sub-title>
                 </v-list-tile-content>
                 <v-list-tile-action>
-                  <v-btn icon :to="{name:'AdminPointUpdate', params:{ id:item.id}}">
+                  <v-btn icon :to="{name:'AdminPointUpdate', params:{ type : item.type, id:item.id}}">
                     <v-icon>edit</v-icon>
                   </v-btn>
                 </v-list-tile-action>
