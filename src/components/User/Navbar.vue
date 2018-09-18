@@ -1,51 +1,61 @@
 <template>
-  <div class="">
- 
-            <v-toolbar dense>
-                <v-toolbar-title class="oswald font-weight-bold">{{title[$root.lang]}}</v-toolbar-title>
+    <div class="">
 
-                <v-spacer></v-spacer>
-                <v-btn icon class="hidden-sm-and-up" :to="{name:'MapPage'}">
-                    <v-icon class="primary-color">place</v-icon>
-                </v-btn>
+        <v-toolbar dense>
+            <v-toolbar-title class="oswald font-weight-bold">{{text[$root.lang].navbar_title}}</v-toolbar-title>
 
-                <v-btn icon class="hidden-sm-and-up" :to="{name:'Informations'}">
-                    <v-icon class="primary-color">info</v-icon>
+            <v-spacer></v-spacer>
+             <v-toolbar-items >
+            <v-tabs v-model="active" show-arrows  slider-color="pink darken-4" >
 
-                </v-btn>
-
-                <v-btn flat class="hidden-xs-only primary-color" :to="{name:'MapPage'}">
+                <v-tab ripple @click="redirect('MapPage')" class="tabs_overwrite oswald font-weight-bold" >
                     <v-icon>place</v-icon>
-                    {{map[$root.lang]}}
-                </v-btn>
-
-                <v-btn flat class="hidden-xs-only primary-color" :to="{name:'Informations'}">
+                    <span class="hidden-xs-only "> {{text[$root.lang].navbar_link_map}}</span>
+                </v-tab>
+                <v-tab ripple @click="redirect('Informations')" class="tabs_overwrite oswald font-weight-bold" >
                     <v-icon>info</v-icon>
-                    {{informations[$root.lang]}}
-                </v-btn>
-                <select name="yoyo" id="" v-model="$root.lang">
-                    <option v-for="item in items" :key="item">{{item}}</option>
-                </select>
+                    <span class="hidden-xs-only"> {{text[$root.lang].navbar_link_info}}</span>
+                </v-tab>
 
-            </v-toolbar>
-  </div>
+            </v-tabs>
+          </v-toolbar-items>
+
+            <select name="" id="" v-model="$root.lang"> -->
+                <option v-for="item in items" :key="item">{{item}}</option>
+            </select>
+
+        </v-toolbar>
+    </div>
 </template>
 
 <script>
+import text from "@/translations/main.json";
+
 export default {
   name: "Navbar",
   data: () => ({
     items: ["fr", "en", "nl"],
-    title: { fr: "Titre", nl: "Nltitle", en: "Title" },
-    map: { fr: "carte", nl: "nlmap", en: "map" },
-    informations: {
-      fr: "informations",
-      nl: "nlinformations",
-      en: "eninformations"
+    text: text,
+    active: null
+  }),
+  created() {
+    console.log("created", this.$route.name);
+    if (this.$route.name == "MapPage") this.active = 0;
+    if (this.$route.name == "Informations") this.active = 1;
+  },
+  methods: {
+    redirect(routeName) {
+      console.log(this.active);
+      this.$router.push({ name: routeName });
     }
-  })
+  }
 };
 </script>
 
 <style scoped>
+.tabs_overwrite {
+  background-color: #f5f5f5;
+  text-transform: none;
+
+}
 </style>
