@@ -83,8 +83,8 @@ export default {
       loading: true,
       categories: [
         { name: "Tous", category: "all" },
-        { name: "Villages", category: "children" },
-        { name: "Parents", category: "parent" },
+        { name: "Détails", category: "children" },
+        { name: "Villages", category: "parent" },
         { name: "Offices", category: "office" }
       ],
       active: null
