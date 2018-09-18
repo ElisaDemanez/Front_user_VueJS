@@ -1,5 +1,6 @@
 <template>
   <div class="hello">
+    <!-- needed for refresh -->
       <span style="display:none;">{{$root.lang}}</span>
     <div id="map">
     </div>
@@ -10,7 +11,6 @@
 <script>
 import MainService from "@/services/MainService";
 import officeIcn from "@/assets/office-de-tourisme.png";
-import baseIcn from "@/assets/base-icon.png";
 import "leaflet";
 import "leaflet-easybutton";
 
@@ -30,13 +30,11 @@ export default {
         iconAnchor: [22, 94],
         popupAnchor: [0, -80]
       }),
-      baseIcon: L.icon({
-        iconUrl: baseIcn,
-
-        iconSize: [45, 45],
-        iconAnchor: [22, 94],
-        popupAnchor: [0, -80]
-      })
+      buttonText: {
+        fr: "Voir plus",
+        en: "See more",
+        nl: "Zie meer"
+      }
     };
   },
   mounted() {
@@ -60,10 +58,10 @@ export default {
     });
   },
   updated() {
-    var self = this;
     this.resetMarkers();
     this.displayParentMarkers();
     this.displayOfficesMarkers();
+    this.detailMode = false;
   },
   methods: {
     async getPoints() {
@@ -127,6 +125,8 @@ export default {
         if (map.getZoom() <= 14 && self.detailMode) {
           self.resetMarkers();
           self.displayParentMarkers();
+          self.displayOfficesMarkers();
+
           self.detailMode = false;
         }
       });
@@ -141,22 +141,26 @@ export default {
         if (self.points.hasOwnProperty(key)) {
           const element = self.points[key];
           if (element.type == "parent") {
-            var marker = L.marker([element.latitude, element.longitude], {
-              icon: self.baseIcon
-            });
+            var marker = L.marker([element.latitude, element.longitude]);
             marker.addTo(self.map);
-
+            var button =
+              element.children.length >= 1
+                ? "  <br> <button type='button' class='white--text oswald-title v-btn pink darken-4 display-children ' data-key='" +
+                  key +
+                  "'><div class='v-btn__content'><i aria-hidden='true' class='v-icon white--text material-icons'>search</i>" +
+                  self.buttonText[self.$root.lang] +
+                  "</div></button>"
+                : null;
             marker.bindPopup(
               "<b>" +
                 this.filteredName(element) +
                 "</b><br>" +
                 this.filteredDescription(element) +
-                "  <br> <button type='button' class='white--text oswald-title v-btn pink darken-4 display-children ' data-key='" +
-                key +
-                "'><div class='v-btn__content'><i aria-hidden='true' class='v-icon white--text material-icons'>search</i> Voir plus</div></button>"
+                button
             );
             markerArray.push(marker);
 
+            // listener on button to display children
             marker.addEventListener("click", function() {
               var classname = document.getElementsByClassName(
                 "display-children"
@@ -175,13 +179,14 @@ export default {
           }
         }
       }
-      // zoom on points
 
+      // zoom on points
       if (markerArray.length) {
         var bounds = new L.featureGroup(markerArray);
         self.map.fitBounds(bounds.getBounds());
       }
     },
+
     displayChildrenMarkers(children) {
       this.resetMarkers();
       this.detailMode = true;
@@ -208,6 +213,7 @@ export default {
       self.map.fitBounds(bounds.getBounds());
       this.displayOfficesMarkers();
     },
+
     displayOfficesMarkers() {
       var self = this;
 
@@ -228,19 +234,20 @@ export default {
         }
       }
     },
+
     resetMarkers() {
       var markerLayer = this.map.getPanes()["markerPane"];
-      while (markerLayer.firstChild) {
+      while (markerLayer.firstChild)
         markerLayer.removeChild(markerLayer.firstChild);
-      }
+
       var shadowLayer = this.map.getPanes()["shadowPane"];
-      while (shadowLayer.firstChild) {
+      while (shadowLayer.firstChild)
         shadowLayer.removeChild(shadowLayer.firstChild);
-      }
+
       this.map.closePopup();
     },
+
     filteredName(element) {
-      console.log(element.name,this.$root.lang )
       var filteredName = Object.filter(
         element.name,
         name => name.langCode == this.$root.lang
