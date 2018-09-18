@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <v-app>
-      
+
           <router-view></router-view>
 
         </v-app>
@@ -11,17 +11,10 @@
 <script>
 import Vue from "vue";
 
+
 export default {
   name: "App",
   data: () => ({
-    items: ["fr", "en", "nl"],
-    title: { fr: "Titre", nl: "Nltitle", en: "Title" },
-    map: { fr: "carte", nl: "nlmap", en: "map" },
-    informations: {
-      fr: "informations",
-      nl: "nlinformations",
-      en: "eninformations"
-    }
   }),
 };
 </script>
