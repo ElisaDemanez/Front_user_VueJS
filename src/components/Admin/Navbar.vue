@@ -10,6 +10,8 @@
                     Points
                 </v-btn>
 
+                <a v-if="$root.connected" @click="logout" style="margin-top: 20px;margin-left: 24px;">Se déconnecter</a>
+
                 <!-- <v-btn flat class="oswald font-weight-bold" :to="{name:''}">
                     Parcours
                 </v-btn> -->
@@ -21,9 +23,20 @@
 </template>
 
 <script>
+
 export default {
   name: "Navbar",
-  data: () => ({})
+  data: () => ({}),
+  methods: {
+    logout() {
+      var confirmation = confirm("Se déconnecter ? ");
+      if (confirmation) {
+        this.$root.connected = false;
+        localStorage.setItem('admin_mode', false); 
+        this.$router.push({ name: "MapPage" });
+      }
+    }
+  }
 };
 </script>
 

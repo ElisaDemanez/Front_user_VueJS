@@ -70,9 +70,12 @@
 <script>
 import Navbar from "@/components/Admin/Navbar";
 import MainService from "@/services/MainService";
+import checkAuth from "@/components/Admin/checkAuth";
 
 export default {
   name: "Points",
+  mixins: [checkAuth],
+
   components: {
     Navbar
   },

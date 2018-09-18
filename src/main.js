@@ -16,7 +16,10 @@ new Vue({
   el: '#app',
   router,
   data: {
-    lang: "fr"
+    lang: "fr",
+    connected: false,
+    username: "admin",
+    password: "admin"
   },
   components: {
     App

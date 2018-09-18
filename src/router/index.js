@@ -2,9 +2,9 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import MapPage from '@/views/User/MapPage'
 import Informations from '@/views/User/Informations'
-import Admin from '@/views/Admin/Admin'
 import Points from '@/views/Admin/Points'
 import Point from '@/views/Admin/Point'
+import Connection from '@/views/Admin/Connection'
 
 
 
@@ -25,9 +25,9 @@ export default new Router({
       component: Informations
     },
     {
-      path: '/admin',
-      name: 'Admin',
-      component: Admin
+      path: '/connexion',
+      name: 'Connection',
+      component: Connection
     },
     {
       path: '/admin/points',

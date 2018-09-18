@@ -59,6 +59,7 @@
 
 <script>
 import Navbar from "@/components/Admin/Navbar";
+import checkAuth from "@/components/Admin/checkAuth";
 import ChildrenList from "@/components/Admin/ChildrenList";
 import MainService from "@/services/MainService";
 import "leaflet";
@@ -66,6 +67,8 @@ const L = window.L;
 
 export default {
   name: "Point",
+  mixins: [checkAuth],
+  
   components: {
     Navbar,
     ChildrenList
@@ -111,6 +114,7 @@ export default {
     // if update
     if (this.$route.params.id) {
       this.getPoint().then(function() {
+        // in template cannot acces element.name[lang], so this neeeded.
         for (const key in self.point.name) {
           if (self.point.name.hasOwnProperty(key)) {
             const element = self.point.name[key];
