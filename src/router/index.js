@@ -27,7 +27,9 @@ export default new Router({
     {
       path: '/connexion',
       name: 'Connection',
-      component: Connection
+      component: Connection,
+      alias: '/admin'
+
     },
     {
       path: '/admin/points',
@@ -44,6 +46,6 @@ export default new Router({
       name: 'AdminPoint',
       component: Point
     }
-    
+
   ]
 })

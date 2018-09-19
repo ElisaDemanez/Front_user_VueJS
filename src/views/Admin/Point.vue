@@ -29,10 +29,10 @@
             </v-flex>
 
           </v-layout>
-          <v-text-field v-model="point.name_en" :counter="50" label="Titre anglais"></v-text-field>
-          <v-text-field v-model="point.description_en" label="Description anglaise"></v-text-field>
-          <v-text-field v-model="point.name_nl" :counter="50" label="Titre néerlandais"></v-text-field>
-          <v-text-field v-model="point.description_nl" label="Description néerlandaise"></v-text-field>
+          <v-text-field v-model="point.name_en" :counter="50" label="Titre anglais" ></v-text-field>
+          <v-text-field v-model="point.description_en" label="Description anglaise" ></v-text-field>
+          <v-text-field v-model="point.name_nl" :counter="50" label="Titre néerlandais" ></v-text-field>
+          <v-text-field v-model="point.description_nl" label="Description néerlandaise" ></v-text-field>
            
             <div v-if=" this.$route.params.type == 'parent'" >
                 <h4 class="oswald font-weight-bold">
@@ -45,9 +45,9 @@
 
             <v-flex xs12 offset-xs5 class="mt-4">
                        
-                        <v-btn color="pink darken-4" dark class=" font-weight-bold" :disabled="!valid" @click="submit">
+            <v-btn color="pink darken-4" dark class=" font-weight-bold" :disabled="!valid" @click="submit">
             Valider
-          </v-btn>
+            </v-btn>
             </v-flex>
 
         </v-form>
@@ -68,7 +68,7 @@ const L = window.L;
 export default {
   name: "Point",
   mixins: [checkAuth],
-  
+
   components: {
     Navbar,
     ChildrenList
@@ -254,13 +254,17 @@ export default {
           ' " ? '
       );
       if (confirmation) {
-        self.deletePoint().then(function(params) {
-          if (params.status == 204) {
+        self
+          .deletePoint()
+          .then(function(params) {
             self.$router.push({ name: "AdminPoints" });
-          } else {
-            alert("Impossible de supprimer le point.");
-          }
-        });
+          })
+          .catch(function(error) {
+            console.log(error, "error");
+            alert(
+              "Impossible de supprimer le point. Vérifiez qu'il n'ai plus de points enfants. "
+            );
+          });
       }
     }
   }
