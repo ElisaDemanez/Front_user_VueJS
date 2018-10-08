@@ -1,5 +1,5 @@
 
- An internship project </br> 
+ An internship project.  </br> 
  Made with Vue.js, Vuetify, Leaflet, Axios. </br> 
 
 ``` bash
