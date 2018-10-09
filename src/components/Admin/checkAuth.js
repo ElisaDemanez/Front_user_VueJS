@@ -1,6 +1,5 @@
 export default {
 
-
   created() {
     this.$root.connected = localStorage.getItem("admin_mode");
 

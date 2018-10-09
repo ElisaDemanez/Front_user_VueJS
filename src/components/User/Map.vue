@@ -145,18 +145,20 @@ export default {
             marker.addTo(self.map);
             var button =
               element.children.length >= 1
-                ? "  <br> <button type='button' class='white--text oswald-title v-btn pink darken-4 display-children ' data-key='" +
-                  key +
-                  "'><div class='v-btn__content'><i aria-hidden='true' class='v-icon white--text material-icons'>search</i>" +
-                  self.buttonText[self.$root.lang] +
-                  "</div></button>"
+                ? `<br> 
+                <button type='button' class='white--text oswald-title v-btn pink darken-4 display-children ' data-key=' ${key}'>
+                  <div class='v-btn__content'>
+                  <i aria-hidden='true' class='v-icon white--text material-icons'>search</i> 
+                  ${self.buttonText[self.$root.lang]} 
+                  </div>
+                </button> `
                 : null;
+
             marker.bindPopup(
-              "<b>" +
-                this.filteredName(element) +
-                "</b><br>" +
-                this.filteredDescription(element) +
-                button
+              `<b> ${this.filteredName(element)} </b>
+                <br> ${this.filteredDescription(element)} 
+               ${button}`,
+              { maxWidth: 250 }
             );
             markerArray.push(marker);
 
@@ -168,8 +170,7 @@ export default {
               var button = classname[classname.length - 1];
 
               button.addEventListener("click", function(e) {
-                var targetID = e.target.dataset.key;
-
+                var targetID = parseInt(e.target.dataset.key);
                 var childrenToDisplay = self.points[targetID].children;
                 if (childrenToDisplay.length > 0) {
                   self.displayChildrenMarkers(childrenToDisplay);
@@ -200,10 +201,9 @@ export default {
           marker.addTo(self.map);
 
           marker.bindPopup(
-            "<b>" +
-              self.filteredName(element) +
-              "</b><br>" +
-              self.filteredDescription(element)
+            `<b> ${self.filteredName(element)} </b>
+                <br> ${self.filteredDescription(element)}`,
+            { maxWidth: 250 }
           );
           markerArray.push(marker);
         }
@@ -226,10 +226,9 @@ export default {
           marker.addTo(self.map);
 
           marker.bindPopup(
-            "<b>" +
-              self.filteredName(element) +
-              "</b><br>" +
-              self.filteredDescription(element)
+            `<b> ${self.filteredName(element)} </b>
+                <br> ${self.filteredDescription(element)}`,
+            { maxWidth: 250 }
           );
         }
       }
@@ -237,10 +236,11 @@ export default {
 
     resetMarkers() {
       var markerLayer = this.map.getPanes()["markerPane"];
+      var shadowLayer = this.map.getPanes()["shadowPane"];
+
       while (markerLayer.firstChild)
         markerLayer.removeChild(markerLayer.firstChild);
 
-      var shadowLayer = this.map.getPanes()["shadowPane"];
       while (shadowLayer.firstChild)
         shadowLayer.removeChild(shadowLayer.firstChild);
 

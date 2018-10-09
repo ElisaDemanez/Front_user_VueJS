@@ -1,13 +1,13 @@
 {
   "fr": {
-    "map_description": "francais",
+    "map_description": "Français",
     "information_placeholder" : "informations",
     "navbar_title" :"Titre", 
     "navbar_link_map" :"Carte",
     "navbar_link_info":"Informations"
   },
   "en": {
-    "map_description": "anglais",
+    "map_description": "Anglais",
     "information_placeholder" : "informations en",
     "navbar_title" :"Title", 
     "navbar_link_map" :"Map",
@@ -15,7 +15,7 @@
 
   },
   "nl": {
-    "map_description": "neer",
+    "map_description": "Neer",
     "information_placeholder" : "informations nl",
     "navbar_title" :"Titre NL", 
     "navbar_link_map" :"Carte NL",

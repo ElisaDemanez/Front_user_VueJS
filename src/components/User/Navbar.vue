@@ -20,7 +20,7 @@
             </v-tabs>
           </v-toolbar-items>
 
-            <select name="" id="" v-model="$root.lang"> -->
+            <select name="" id="" v-model="$root.lang"> 
                 <option v-for="item in items" :key="item">{{item}}</option>
             </select>
 
@@ -39,13 +39,11 @@ export default {
     active: null
   }),
   created() {
-    console.log("created", this.$route.name);
     if (this.$route.name == "MapPage") this.active = 0;
     if (this.$route.name == "Informations") this.active = 1;
   },
   methods: {
     redirect(routeName) {
-      console.log(this.active);
       this.$router.push({ name: routeName });
     }
   }

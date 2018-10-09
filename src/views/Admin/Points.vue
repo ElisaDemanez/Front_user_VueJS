@@ -1,78 +1,79 @@
 <template>
-    <div class="">
-        <Navbar />
-        <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
-                <v-layout row class="mt-5">
-                    <v-flex xs10>
-                        <h2 class="headline oswald font-weight-bold">
-                            Les Points
-                        </h2>
-                    </v-flex>
-                    <v-flex xs2>
-                        <v-menu offset-y>
-                            <v-btn fab dark color="pink darken-4" slot="activator">
-                                <v-icon dark>add</v-icon>
-                            </v-btn>
+  <div class="">
+    <Navbar />
+    <v-layout row>
+      <v-flex xs12 sm6 offset-sm3>
+        <v-layout row class="mt-5">
+          <v-flex xs10>
+            <h2 class="headline oswald font-weight-bold">
+              Les Points
+            </h2>
+          </v-flex>
+          <v-flex xs2>
+            <v-menu offset-y>
+              <v-btn fab dark color="pink darken-4" slot="activator">
+                <v-icon dark>add</v-icon>
+              </v-btn>
 
-                            <v-list>
-                                <v-list-tile :to="{name:'AdminPoint', params:{type : 'parent'}}">
-                                    <v-list-tile-title> Village</v-list-tile-title>
-                                </v-list-tile>
-                                <v-list-tile :to="{name:'AdminPoint', params:{type : 'children'}}">
-                                    <v-list-tile-title> Détail</v-list-tile-title>
-                                </v-list-tile>
-                                <v-list-tile :to="{name:'AdminPoint', params:{type : 'office'}}">
-                                    <v-list-tile-title> Office</v-list-tile-title>
-                                </v-list-tile>
-                            </v-list>
-                        </v-menu>
-                    </v-flex>
-                </v-layout>
-                <v-tabs fixed-tabs v-if="!loading" v-model="active">
-                    <v-tab v-for="n in categories" :key="n.name" @click="refreshFilter(n.category)">
-                        {{ n.name }}
-                    </v-tab>
-                </v-tabs>
-                <v-card>
-                    <v-list two-line>
-                        <v-container v-if="loading" fill-height>
-                            <v-layout row wrap align-center>
-                                <v-flex class="text-xs-center">
-                                    <v-progress-circular indeterminate>
-                                    </v-progress-circular>
-                                </v-flex>
-                            </v-layout>
-                        </v-container>
+              <v-list>
+                <v-list-tile :to="{name:'AdminPoint', params:{type : 'parent'}}">
+                  <v-list-tile-title> Village</v-list-tile-title>
+                </v-list-tile>
+                <v-list-tile :to="{name:'AdminPoint', params:{type : 'children'}}">
+                  <v-list-tile-title> Détail</v-list-tile-title>
+                </v-list-tile>
+                <v-list-tile :to="{name:'AdminPoint', params:{type : 'office'}}">
+                  <v-list-tile-title> Office</v-list-tile-title>
+                </v-list-tile>
+              </v-list>
+            </v-menu>
+          </v-flex>
+        </v-layout>
+        <v-tabs fixed-tabs v-if="!loading" v-model="active">
+          <v-tab v-for="n in categories" :key="n.name" @click="refreshFilter(n.category)">
+            {{ n.name }}
+          </v-tab>
+        </v-tabs>
+        <v-card>
+          <v-list two-line>
+            <v-container v-if="loading" fill-height>
+              <v-layout row wrap align-center>
+                <v-flex class="text-xs-center">
+                  <v-progress-circular indeterminate>
+                  </v-progress-circular>
+                </v-flex>
+              </v-layout>
+            </v-container>
 
-                        <template v-else v-for="(item, index) in filteredPoints">
-                            <!-- {{item}} -->
-                            <v-list-tile :key="index" avatar>
-                                <!-- <v-list-tile-avatar>
+            <template v-else v-for="(item, index) in filteredPoints">
+              <v-list-tile :key="'tile-'+index">
+                <!-- avatar -->
+                <!-- <v-list-tile-avatar>
                                     <img :src="item.avatar">
                                 </v-list-tile-avatar> -->
-
-                                <v-list-tile-content :key="item.id">
-                                    <v-list-tile-title v-for="name in item.name" v-if="name.langCode=='fr'" :key="name.nametext">
-                                        {{name.nametext }}</v-list-tile-title>
-                                    <v-list-tile-sub-title v-for="description in item.description" v-if="description.langCode=='fr'"
-                                        :key="description.descriptiontext">
-                                        {{description.descriptionText }}</v-list-tile-sub-title>
-                                </v-list-tile-content>
-                                <v-list-tile-action>
-                                    <v-btn icon :to="{name:'AdminPointUpdate', params:{ type : item.type, id:item.id}}">
-                                        <v-icon>edit</v-icon>
-                                    </v-btn>
-                                </v-list-tile-action>
-                            </v-list-tile>
-                            <v-divider :key="item.latitude+item.longitude"></v-divider>
-                        </template>
-                    </v-list>
-                </v-card>
-            </v-flex>
-        </v-layout>
-    </div>
+                <v-list-tile-content :key="'content-'+item.id">
+                  <v-list-tile-title v-for="name in item.name" v-if="name.langCode=='fr'" :key="name.nametext">
+                    {{name.nametext }}
+                  </v-list-tile-title>
+                  <v-list-tile-sub-title v-for="description in item.description" v-if="description.langCode=='fr'" :key="description.descriptiontext">
+                    {{description.descriptionText }}
+                  </v-list-tile-sub-title>
+                </v-list-tile-content>
+                <v-list-tile-action>
+                  <v-btn icon :to="{name:'AdminPointUpdate', params:{ type : item.type, id:item.id}}">
+                    <v-icon>edit</v-icon>
+                  </v-btn>
+                </v-list-tile-action>
+              </v-list-tile>
+              <v-divider :key=" 'divider-'+ index + item.latitude + item.longitude"></v-divider>
+            </template>
+          </v-list>
+        </v-card>
+      </v-flex>
+    </v-layout>
+  </div>
 </template>
+
 
 
 <script>
@@ -94,8 +95,8 @@ export default {
       loading: true,
       categories: [
         { name: "Tous", category: "all" },
-        { name: "Détails", category: "children" },
         { name: "Villages", category: "parent" },
+        { name: "Détails", category: "children" },
         { name: "Offices", category: "office" }
       ],
       active: null
@@ -109,7 +110,6 @@ export default {
     },
     refreshFilter(category) {
       let self = this;
-
       //  you cant use computed stuff when depending on async stuff
       if (category == "all") this.filteredPoints = this.points;
       else {

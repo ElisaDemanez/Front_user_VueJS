@@ -9,12 +9,14 @@
         <h2 class="headline oswald font-weight-bold" v-else>
           Nouveau point
         </h2>
-            <v-flex xs12  offset-xs9 v-if="this.$route.params.id">
-              <v-btn color="error" @click="deletePointMethod"><v-icon light>delete</v-icon> Supprimer  </v-btn>
-            </v-flex>
+        <v-flex xs12 offset-xs9 v-if="this.$route.params.id">
+          <v-btn color="error" @click="deletePointMethod">
+            <v-icon light>delete</v-icon> Supprimer
+          </v-btn>
+        </v-flex>
         <v-form v-model="valid">
           <v-text-field v-model="point.name_fr" :counter="50" label="Titre" required></v-text-field>
-          <v-text-field v-model="point.description_fr" label="Description" required></v-text-field>
+          <v-textarea auto-grow rows="1" v-model="point.description_fr" label="Description" required></v-textarea>
 
           <div id="map">
           </div>
@@ -29,26 +31,26 @@
             </v-flex>
 
           </v-layout>
-          <v-text-field v-model="point.name_en" :counter="50" label="Titre anglais" ></v-text-field>
-          <v-text-field v-model="point.description_en" label="Description anglaise" ></v-text-field>
-          <v-text-field v-model="point.name_nl" :counter="50" label="Titre néerlandais" ></v-text-field>
-          <v-text-field v-model="point.description_nl" label="Description néerlandaise" ></v-text-field>
-           
-            <div v-if=" this.$route.params.type == 'parent'" >
-                <h4 class="oswald font-weight-bold">
-                   Points enfants
-                 </h4>
+          <v-text-field v-model="point.name_en" :counter="50" label="Titre anglais"></v-text-field>
+          <v-textarea auto-grow rows="1" v-model="point.description_en" label="Description anglaise"></v-textarea>
+          <v-text-field v-model="point.name_nl" :counter="50" label="Titre néerlandais"></v-text-field>
+          <v-textarea auto-grow rows="1" v-model="point.description_nl" label="Description néerlandaise"></v-textarea>
 
-              <ChildrenList :childrenArray="childrenArray" :truc="childListUpdate" @selected="updateSelected"/>
-            </div>          
+          <div v-if=" this.$route.params.type == 'parent'">
+            <h4 class="oswald font-weight-bold">
+              Points enfants
+            </h4>
+
+            <ChildrenList :childrenArray="childrenArray" :truc="childListUpdate" @selected="updateSelected" />
+          </div>
 
 
-            <v-flex xs12 offset-xs5 class="mt-4">
-                       
+          <v-flex xs12 offset-xs5 class="mt-4">
+
             <v-btn color="pink darken-4" dark class=" font-weight-bold" :disabled="!valid" @click="submit">
-            Valider
+              Valider
             </v-btn>
-            </v-flex>
+          </v-flex>
 
         </v-form>
 
@@ -56,6 +58,7 @@
     </v-layout>
   </div>
 </template>
+
 
 <script>
 import Navbar from "@/components/Admin/Navbar";
@@ -169,6 +172,7 @@ export default {
     },
     async deletePoint() {
       const response = await MainService.deletePoint(this.$route.params.id);
+      console.log("deleteresponse", response);
       return response;
     },
 
@@ -204,47 +208,51 @@ export default {
           this.childrenArray[index] = "/api/points/" + element;
         });
       }
-      const params = {
-        type: this.$route.params.type,
-        latitude: this.point.latitude,
-        longitude: this.point.longitude,
-        name: [
-          {
-            nametext: this.point.name_fr,
-            langCode: "fr"
-          },
-          {
-            nametext: this.point.name_en,
-            langCode: "en"
-          },
-          {
-            nametext: this.point.name_nl,
-            langCode: "nl"
-          }
-        ],
-        description: [
-          {
-            langCode: "fr",
-            descriptionText: this.point.description_fr
-          },
-          {
-            langCode: "en",
-            descriptionText: this.point.description_en
-          },
-          {
-            langCode: "nl",
-            descriptionText: this.point.description_nl
-          }
-        ],
-        children: this.childrenArray
-      };
-      console.log(params);
-      if (this.$route.params.id) {
-        MainService.putPoint(this.point.id, params);
+      if (this.point.name_fr && this.point.description_fr) {
+        const params = {
+          type: this.$route.params.type,
+          latitude: this.point.latitude,
+          longitude: this.point.longitude,
+          name: [
+            {
+              nametext: this.point.name_fr,
+              langCode: "fr"
+            },
+            {
+              nametext: this.point.name_en,
+              langCode: "en"
+            },
+            {
+              nametext: this.point.name_nl,
+              langCode: "nl"
+            }
+          ],
+          description: [
+            {
+              langCode: "fr",
+              descriptionText: this.point.description_fr
+            },
+            {
+              langCode: "en",
+              descriptionText: this.point.description_en
+            },
+            {
+              langCode: "nl",
+              descriptionText: this.point.description_nl
+            }
+          ],
+          children: this.childrenArray
+        };
+        console.log("point to push", params);
+        if (this.$route.params.id) {
+          MainService.putPoint(this.point.id, params);
+        } else {
+          MainService.postPoint(params);
+        }
+        this.$router.push({ name: "AdminPoints" });
       } else {
-        MainService.postPoint(params);
+        alert("Les textes français sont obligatoires");
       }
-      this.$router.push({ name: "AdminPoints" });
     },
     deletePointMethod() {
       var self = this;
@@ -260,9 +268,9 @@ export default {
             self.$router.push({ name: "AdminPoints" });
           })
           .catch(function(error) {
-            console.log(error, "error");
+            console.log("error", error);
             alert(
-              "Impossible de supprimer le point. Vérifiez qu'il n'ai plus de points enfants. "
+              "Impossible de supprimer le point. Vérifiez qu'il n'y ai plus de points enfants. "
             );
           });
       }

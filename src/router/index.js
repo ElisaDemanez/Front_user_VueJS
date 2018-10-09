@@ -6,10 +6,6 @@ import Points from '@/views/Admin/Points'
 import Point from '@/views/Admin/Point'
 import Connection from '@/views/Admin/Connection'
 
-
-
-
-
 Vue.use(Router)
 
 export default new Router({

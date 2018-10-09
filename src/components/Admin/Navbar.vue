@@ -12,9 +12,6 @@
 
                 <a v-if="$root.connected" @click="logout" style="margin-top: 20px;margin-left: 24px;">Se déconnecter</a>
 
-                <!-- <v-btn flat class="oswald font-weight-bold" :to="{name:''}">
-                    Parcours
-                </v-btn> -->
             </v-toolbar-items>
 
 
